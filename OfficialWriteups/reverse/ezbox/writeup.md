@@ -97,7 +97,7 @@ solve_level('h10', game, 'h10')
 print(try_get_flag(game.completed_hashes, game.total_steps))
 ```
 
-`cd` 进解包目录后运行。完整脚本见附件 `solve.py`。
+`cd` 进解包目录后运行。完整脚本见源文件 `solve.py`。
 
 ---
 

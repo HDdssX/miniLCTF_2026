@@ -100,7 +100,7 @@ g_stub_state.key = 0x407fa0
 
 ```bash
 $ gdb -q GQuuuuuupX
-(gdb) watch *0x407fa0
+(gdb) watch *(unsigned char*)0x407fa0
 (gdb) run miniL{A}
 ```
 
