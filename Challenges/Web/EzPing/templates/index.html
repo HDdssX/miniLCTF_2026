@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Diagnostic Tool</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { margin-top: 0; color: #333; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        input[type="text"] { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: monospace; }
+        button { width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s; }
+        button:hover { background-color: #0056b3; }
+        #output { background-color: #272822; color: #f8f8f2; padding: 15px; border-radius: 4px; font-family: monospace; white-space: pre-wrap; word-wrap: break-word; min-height: 100px; margin-top: 20px; display: none; }
+        .error { color: #ff4c4c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ping Diagnostic</h2>
+        <p style="text-align: center; color: #666; font-size: 14px;">Enter an IP address to test connectivity.</p>
+        <div class="form-group">
+            <input type="text" id="targetInput" placeholder="e.g., 127.0.0.1" value="127.0.0.1">
+        </div>
+        <button onclick="sendPing()">Execute Ping</button>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        async function sendPing() {
+            const target = document.getElementById('targetInput').value;
+            const outputDiv = document.getElementById('output');
+            const btn = document.querySelector('button');
+            
+            outputDiv.style.display = 'block';
+            outputDiv.innerHTML = 'Pinging...';
+            outputDiv.classList.remove('error');
+            btn.disabled = true;
+
+            try {
+                // 默认的 fetch 请求会发送标准的 UTF-8 JSON，这会被服务端的裸字节 WAF 拦截恶意 payload
+                const response = await fetch('/api/ping', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ target: target })
+                });
+
+                const result = await response.json();
+                
+                if (response.ok && result.success) {
+                    outputDiv.innerHTML = result.output;
+                } else {
+                    outputDiv.innerHTML = result.error || result.output || 'Unknown error occurred.';
+                    outputDiv.classList.add('error');
+                }
+            } catch (error) {
+                outputDiv.innerHTML = 'Network error: ' + error.message;
+                outputDiv.classList.add('error');
+            } finally {
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

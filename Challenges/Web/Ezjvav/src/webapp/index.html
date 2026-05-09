@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Northbridge Public Site Studio</title>
+    <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+    <main class="shell">
+        <section class="hero">
+            <p class="eyebrow">Northbridge Communications Office</p>
+            <h1>Public Site Studio</h1>
+            <p class="lead">Prepare a release workspace, stage a branded site archive, and review the generated preview before delivery.</p>
+        </section>
+
+        <section class="panel panel-wide">
+            <div class="panel-copy">
+                <h2>Release Workspace</h2>
+                <p class="muted">This console provisions an isolated workspace before it accepts any release archive. Operators usually stage creative assets, review the generated page, and then export the final delivery bundle.</p>
+            </div>
+
+            <form id="importForm" class="intake">
+                <label for="bundle">Release Archive</label>
+                <input id="bundle" name="bundle" type="file" accept=".zip" required>
+                <button type="submit">Open Workspace And Stage Archive</button>
+            </form>
+
+            <div id="result" class="result" aria-live="polite"></div>
+        </section>
+
+        <section class="grid">
+            <article class="panel">
+                <h2>Accepted Materials</h2>
+                <ul class="contract">
+                    <li><code>manifest.json</code></li>
+                    <li><code>assets/**</code></li>
+                    <li><code>templates/**</code></li>
+                </ul>
+            </article>
+
+            <article class="panel">
+                <h2>Operator Notes</h2>
+                <p class="muted">Preview and export links appear only after a workspace has been issued and the release archive has been staged successfully.</p>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const form = document.getElementById('importForm');
+        const result = document.getElementById('result');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            result.textContent = 'Opening workspace...';
+
+            const workspaceResponse = await fetch('/api/studio/workspaces', {
+                method: 'POST'
+            });
+            const workspaceText = await workspaceResponse.text();
+            if (!workspaceResponse.ok) {
+                result.textContent = workspaceText;
+                return;
+            }
+
+            const workspace = JSON.parse(workspaceText);
+            result.textContent = 'Staging archive...';
+
+            const data = new FormData();
+            const file = document.getElementById('bundle').files[0];
+            data.append('archive', file);
+
+            const response = await fetch(workspace.uploadUrl, {
+                method: 'POST',
+                body: data
+            });
+
+            const text = await response.text();
+            if (!response.ok) {
+                result.textContent = text;
+                return;
+            }
+
+            const payload = JSON.parse(text);
+            result.innerHTML = `
+                <p><strong>siteId:</strong> ${payload.siteId}</p>
+                <p><strong>workspace:</strong> ${payload.state}</p>
+                <p><a href="${payload.previewUrl}" target="_blank" rel="noreferrer">Open preview</a></p>
+                <p><a href="${payload.exportUrl}" target="_blank" rel="noreferrer">Download release bundle</a></p>
+            `;
+        });
+    </script>
+</body>
+</html>

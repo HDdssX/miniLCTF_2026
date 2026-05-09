@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OmniProbe Diagnostic</title>
+    <style>
+        body { background-color: #f8f9fa; color: #212529; font-family: -apple-system, sans-serif; padding: 50px; display: flex; justify-content: center; }
+        .container { background-color: #ffffff; border: 1px solid #dee2e6; border-radius: 4px; padding: 40px; width: 60%; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        h2 { color: #343a40; font-weight: 500; border-bottom: 1px solid #e9ecef; padding-bottom: 15px; margin-top: 0; }
+        .api-list { background-color: #f8f9fa; border: 1px solid #e9ecef; padding: 15px 20px; border-radius: 4px; margin-top: 25px; }
+        .api-list ul { list-style-type: none; padding-left: 0; margin: 0; }
+        .api-list li { margin: 8px 0; font-family: monospace; font-size: 13px; color: #d63384; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>OmniProbe</h2>
+        <p>Current Role: <b id="roleBadge">Loading...</b></p>
+        <div class="api-list">
+            <ul>
+                <li>GET /api/stats</li>
+                <li>GET /api/me</li>
+                <li>POST /api/verify</li>
+                <li>POST /api/run</li>
+                <li>GET /api/run?cursor=N</li>
+            </ul>
+        </div>
+    </div>
+    <script>
+        const sid = localStorage.getItem('X-Session-Id');
+        const headers = sid ? { 'X-Session-Id': sid } : {};
+
+        fetch('/api/me', { headers }).then(res => {
+            const newSid = res.headers.get('X-Session-Id');
+            if (newSid) localStorage.setItem('X-Session-Id', newSid);
+            return res.json();
+        }).then(data => { 
+            document.getElementById('roleBadge').innerText = data.role; 
+        });
+    </script>
+</body>
+</html>

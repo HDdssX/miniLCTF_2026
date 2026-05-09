@@ -1,0 +1,14 @@
+solver/
+*.class
+*.zip
+*.pyc
+__pycache__/
+_agent_build/
+_exp_tmp/
+_audit_tmp/
+.check/
+.tomcat/
+.tomcat.zip
+README.md
+minil2026-minil2026jvav.tar
+minil2026-minil2026jvav.tar.gz

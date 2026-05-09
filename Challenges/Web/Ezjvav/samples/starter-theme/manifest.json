@@ -1,0 +1,8 @@
+{
+  "name": "Northbridge Investor Update",
+  "author": "Communications Office",
+  "accent": "#8f4d2e",
+  "headline": "Prepared for executive review",
+  "note": "This starter archive uses only the documented public site features.",
+  "template": "templates/preview.html"
+}

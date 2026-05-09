@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    font-family: "Avenir Next", "Segoe UI", sans-serif;
+    background: linear-gradient(180deg, #f3ece4, #fbf8f2);
+    color: #1f1a17;
+}
+
+.shell {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.card {
+    width: min(720px, 100%);
+    padding: 32px;
+    border-radius: 22px;
+    border: 1px solid rgba(74, 53, 41, 0.14);
+    background: rgba(255, 251, 246, 0.88);
+    box-shadow: 0 24px 60px rgba(58, 39, 29, 0.14);
+}
+
+h1 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+    color: #8f4d2e;
+}
+
+small, footer {
+    color: #7a6e65;
+}
