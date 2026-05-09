@@ -1,0 +1,9 @@
+services:
+  recovery-pod-app:
+    build: .
+    image: minil2026-recovery-pod:latest
+    container_name: ctf-recovery-pod
+    environment:
+      - FLAG=miniL{test}
+    ports:
+      - "1337:1337"
