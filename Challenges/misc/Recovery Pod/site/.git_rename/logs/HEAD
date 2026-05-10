@@ -1,0 +1,7 @@
+0000000000000000000000000000000000000000 b88b63cf974002b8fa4b5a8b61aebe456d045f91 ops <ops@example.com> 1777302469 +0800	commit (initial): init ops playbooks repo
+b88b63cf974002b8fa4b5a8b61aebe456d045f91 2a0c1b1f3e6d327d65376f61b1e93bb20c712076 ops <ops@example.com> 1777302481 +0800	commit: add deploy checklist and service inventory
+2a0c1b1f3e6d327d65376f61b1e93bb20c712076 225b455a216fe9e7c0777892dcd93230141fc2f3 ops <ops@example.com> 1777302489 +0800	commit: document rollback procedure
+225b455a216fe9e7c0777892dcd93230141fc2f3 e80492c401334db1d1a03db6350f3541f6d5cfa0 ops <ops@example.com> 1777302499 +0800	commit: add basic service probe script
+e80492c401334db1d1a03db6350f3541f6d5cfa0 98815b2e21cfce7740cbd9801d05a7943eeebcb1 ops <ops@example.com> 1777302509 +0800	commit: tighten deploy and recovery notes
+98815b2e21cfce7740cbd9801d05a7943eeebcb1 9563e3180e2991faec7d904497594aeb60794b35 ops <ops@example.com> 1777302518 +0800	commit: normalize recovery checks across runbooks
+9563e3180e2991faec7d904497594aeb60794b35 94fa9139f6fbfeb19b47ef746b90b181b06902e1 ops <ops@example.com> 1777302533 +0800	commit: add snapshot recovery helper

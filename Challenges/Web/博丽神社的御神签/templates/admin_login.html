@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>社务后台登录 | 博丽神社的御神签</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page-frame page-frame--admin">
+        <header class="topbar">
+            <div class="brand">
+                <div class="torii-mark" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" role="presentation">
+                        <path d="M10 18h44M16 26h32M19 18v34M45 18v34M24 26v22M40 26v22M16 52h32" />
+                    </svg>
+                </div>
+                <div class="brand-copy">
+                    <p class="eyebrow">Hakurei Shrine Omikuji / Shrine Office Access</p>
+                    <h1>社务后台登录</h1>
+                </div>
+            </div>
+
+            <div class="topbar-meta">
+                <a class="admin-entry admin-link" href="{{ url_for('index') }}">返回前台</a>
+            </div>
+        </header>
+
+        <main class="admin-shell admin-shell--center">
+            <section class="admin-panel admin-panel--form surface">
+                <div class="panel-head">
+                    <div>
+                        <p class="section-tag">身份核验</p>
+                        <p class="section-title">社务管理员登录</p>
+                    </div>
+                    <p class="section-note">Oracle Gate</p>
+                </div>
+
+                <form class="admin-form" method="post">
+                    <label class="field-block" for="username">
+                        <span class="field-label">管理员名</span>
+                        <input id="username" name="username" type="text" autocomplete="username" placeholder="请输入社务账号" required>
+                    </label>
+
+                    <label class="field-block" for="password">
+                        <span class="field-label">通行口令</span>
+                        <input id="password" name="password" type="password" autocomplete="current-password" placeholder="请输入口令" required>
+                    </label>
+
+                    {% if error_message %}
+                    <p class="form-error" role="alert">{{ error_message }}</p>
+                    {% endif %}
+
+                    <button class="draw-button admin-submit" type="submit">进入社务后台</button>
+                </form>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

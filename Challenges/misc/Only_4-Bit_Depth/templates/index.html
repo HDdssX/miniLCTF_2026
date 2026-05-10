@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Only 4-Bit Depth?</title>
+  <style>
+    :root {
+      --bg: #f1ead8;
+      --paper: #fffaf0;
+      --ink: #1b1b1b;
+      --accent: #a63d40;
+      --accent-dark: #81292c;
+      --accent-soft: #ecd7c7;
+      --steel: #304e5e;
+      --line: #d8cdb4;
+      --panel: rgba(255, 250, 240, 0.88);
+      --shadow: 0 24px 80px rgba(27, 27, 27, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: "Noto Serif SC", "Source Han Serif SC", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(166, 61, 64, 0.12), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(48, 78, 94, 0.10), transparent 24%),
+        linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 45%),
+        var(--bg);
+    }
+
+    main {
+      min-height: 100vh;
+      padding: 32px;
+    }
+
+    .shell {
+      min-height: calc(100vh - 64px);
+      width: 70%;
+      min-width: 800px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(360px, 1.05fr) minmax(340px, 0.95fr);
+      gap: 24px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(6px);
+    }
+
+    .editor {
+      padding: 36px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .preview {
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 248, 236, 0.94)),
+        var(--panel);
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: 0.04em;
+    }
+
+    h2 {
+      font-size: 20px;
+      letter-spacing: 0.05em;
+    }
+
+    .lede {
+      margin-top: 14px;
+      max-width: 56ch;
+    }
+
+    p {
+      line-height: 1.7;
+      margin: 10px 0;
+    }
+
+    .download-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .button,
+    button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      border: none;
+      padding: 12px 18px;
+      font: inherit;
+      text-decoration: none;
+      color: #fff;
+      background: var(--accent);
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+
+    .button:hover,
+    button:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .button.alt {
+      color: var(--steel);
+      background: var(--accent-soft);
+    }
+
+    form {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      margin-top: 26px;
+    }
+
+    label {
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 300px;
+      margin-top: 10px;
+      padding: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.92);
+      font: inherit;
+      font-size: 16px;
+      line-height: 1.7;
+      resize: vertical;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .hint,
+    .status {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .status {
+      min-height: 1.5em;
+      margin-top: 10px;
+      color: var(--steel);
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .preview-meta {
+      text-align: right;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .canvas-wrap {
+      flex: 1;
+      display: grid;
+      place-items: center;
+      min-height: 320px;
+      margin: 24px 0;
+      padding: 24px;
+      border: 1px dashed var(--line);
+      background:
+        linear-gradient(45deg, rgba(216, 205, 180, 0.2) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(216, 205, 180, 0.2) 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, rgba(216, 205, 180, 0.2) 75%),
+        linear-gradient(-45deg, transparent 75%, rgba(216, 205, 180, 0.2) 75%);
+      background-size: 18px 18px;
+      background-position: 0 0, 0 9px, 9px -9px, -9px 0;
+    }
+
+    .preview-image {
+      display: none;
+      width: {{ bmp_width * preview_scale }}px;
+      max-width: 100%;
+      image-rendering: pixelated;
+      border: 1px solid rgba(27, 27, 27, 0.15);
+      background: #fff;
+      box-shadow: 0 18px 32px rgba(27, 27, 27, 0.14);
+    }
+
+    .preview-placeholder {
+      max-width: 26ch;
+      text-align: center;
+      opacity: 0.65;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .preview-actions .button[aria-disabled="true"] {
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    @media (max-width: 920px) {
+      main {
+        padding: 18px;
+      }
+
+      .shell {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: 1fr;
+      }
+
+      .editor,
+      .preview {
+        padding: 24px;
+      }
+
+      textarea {
+        min-height: 240px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      main {
+        padding: 12px;
+      }
+
+      .shell {
+        gap: 12px;
+      }
+
+      .editor,
+      .preview {
+        padding: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="shell">
+      <section class="panel editor">
+        <h1>Only 4-Bit Depth?</h1>
+        <p class="lede">目标字符串被编码进了一张 BMP 图里。请你尝试还原。</p>
+        <div class="download-row">
+          <a class="button alt" href="{{ url_for('static', filename='flag.bmp') }}" download="flag.bmp">Download Challenge BMP</a>
+        </div>
+        <p class="lede">你可以用下面的窗口将任意字符串转为 BMP 图。还有一件事值得注意：图片里的颜色值只有少量离散取值。</p>
+        <form id="render-form">
+          <label for="text">Text to BMP</label>
+          <textarea id="text" name="text" placeholder="aaaaaabbbbbb......AAAabcbcd"></textarea>
+          <div class="toolbar">
+            <button type="submit">Render Preview</button>
+          </div>
+          <p class="status" id="status"></p>
+        </form>
+      </section>
+      <section class="panel preview">
+        <div class="preview-head">
+          <div>
+            <h2>Preview</h2>
+          </div>
+        </div>
+        <div class="canvas-wrap">
+          <img id="preview-image" class="preview-image" alt="rendered bmp preview">
+          <p id="preview-placeholder" class="preview-placeholder">提交一段文字后，右侧会显示生成出的 BMP 预览。</p>
+        </div>
+        <div class="preview-actions">
+          <a id="download-render" class="button" href="#" download="render.bmp" aria-disabled="true">Download Render BMP</a>
+        </div>
+      </section>
+    </div>
+    <script>
+      const form = document.getElementById("render-form");
+      const textarea = document.getElementById("text");
+      const status = document.getElementById("status");
+      const previewImage = document.getElementById("preview-image");
+      const placeholder = document.getElementById("preview-placeholder");
+      const downloadLink = document.getElementById("download-render");
+
+      let currentObjectUrl = null;
+
+      function setStatus(message) {
+        status.textContent = message;
+      }
+
+      function clearPreview() {
+        if (currentObjectUrl) {
+          URL.revokeObjectURL(currentObjectUrl);
+          currentObjectUrl = null;
+        }
+        previewImage.removeAttribute("src");
+        previewImage.style.display = "none";
+        placeholder.style.display = "block";
+        downloadLink.setAttribute("aria-disabled", "true");
+        downloadLink.href = "#";
+      }
+
+      async function renderPreview() {
+        const text = textarea.value;
+        if (!text) {
+          clearPreview();
+          setStatus("请输入要编码的文本。");
+          return;
+        }
+
+        setStatus("Rendering...");
+        downloadLink.setAttribute("aria-disabled", "true");
+
+        try {
+          const body = new URLSearchParams();
+          body.set("text", text);
+
+          const response = await fetch("/api/render", {
+            method: "POST",
+            body,
+          });
+
+          if (!response.ok) {
+            const message = await response.text();
+            throw new Error(message.trim() || "render failed");
+          }
+
+          const blob = await response.blob();
+          if (currentObjectUrl) {
+            URL.revokeObjectURL(currentObjectUrl);
+          }
+          currentObjectUrl = URL.createObjectURL(blob);
+          previewImage.src = currentObjectUrl;
+          previewImage.style.display = "block";
+          placeholder.style.display = "none";
+          downloadLink.href = currentObjectUrl;
+          downloadLink.setAttribute("aria-disabled", "false");
+          setStatus("Render complete.");
+        } catch (error) {
+          clearPreview();
+          setStatus(error.message || "render failed");
+        }
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        await renderPreview();
+      });
+    </script>
+  </main>
+</body>
+</html>
