@@ -1,0 +1,8 @@
+services:
+  minil2026-bmp-app:
+    build: .
+    image: minil2026-bmp:latest
+    ports:
+      - "8000:8000"
+    environment:
+      FLAG: "miniL{7e815c3d-fcff-4386-91e6-1bdcb17efe8d}"

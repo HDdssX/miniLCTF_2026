@@ -1,0 +1,9 @@
+services:
+  omikuji-app:
+    build: .
+    container_name: ctf-omikuji
+    environment:
+      - FLAG=miniL{env_test}
+      # 模拟比赛平台自动注入动态 FLAG 的环境变量
+    ports:
+      - "5000:5000"

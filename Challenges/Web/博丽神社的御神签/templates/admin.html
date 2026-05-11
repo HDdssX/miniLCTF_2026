@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>社务后台 | 博丽神社的御神签</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page-frame page-frame--admin">
+        <header class="topbar">
+            <div class="brand">
+                <div class="torii-mark" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" role="presentation">
+                        <path d="M10 18h44M16 26h32M19 18v34M45 18v34M24 26v22M40 26v22M16 52h32" />
+                    </svg>
+                </div>
+                <div class="brand-copy">
+                    <p class="eyebrow">Hakurei Shrine Omikuji / Admin Console</p>
+                    <h1>社务后台</h1>
+                </div>
+            </div>
+
+            <div class="topbar-meta">
+                <span class="meta-chip">当前社务员 {{ admin_username }}</span>
+                <form method="post" action="{{ url_for('admin_logout') }}">
+                    <button class="admin-entry" type="submit">退出后台</button>
+                </form>
+            </div>
+        </header>
+
+        <main class="admin-dashboard">
+            <section class="dashboard-grid dashboard-grid--columns">
+                <article class="notice-card notice-card--soft">
+                    <div class="panel-head">
+                        <div>
+                            <p class="section-title">/app/static</p>
+                        </div>
+                    </div>
+                    <div class="tree-shell">
+                        {% macro render_tree(node) -%}
+                        <li class="tree-node">
+                            <div class="tree-row">
+                                <span class="tree-name">
+                                    {% if node.is_link %}
+                                    <span class="tree-kind tree-kind--link">link</span>
+                                    {% elif node.is_dir %}
+                                    <span class="tree-kind">dir</span>
+                                    {% else %}
+                                    <span class="tree-kind tree-kind--file">file</span>
+                                    {% endif %}
+                                    {% if node.url %}
+                                    <a href="{{ node.url }}" target="_blank" rel="noreferrer">{{ node.name }}</a>
+                                    {% else %}
+                                    {{ node.name }}
+                                    {% endif %}
+                                </span>
+                                <span class="tree-path">{{ node.path }}</span>
+                            </div>
+                            {% if node.link_target %}
+                            <p class="tree-meta">symlink -> <code>{{ node.link_target }}</code>{% if node.resolved_path %} | resolved: <code>{{ node.resolved_path }}</code>{% endif %}</p>
+                            {% elif node.size_text %}
+                            <p class="tree-meta">size: {{ node.size_text }}</p>
+                            {% endif %}
+                            {% if node.children %}
+                            <ul class="tree-children">
+                                {% for child in node.children %}
+                                {{ render_tree(child) }}
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {%- endmacro %}
+
+                        <ul class="tree-root">
+                            {{ render_tree(static_tree) }}
+                        </ul>
+                    </div>
+                </article>
+
+                <article class="notice-card">
+                    <div class="panel-head">
+                        <div>
+                            <p class="section-title">静态资源上传</p>
+                        </div>
+                    </div>
+
+                    <form class="admin-form" method="post" action="{{ url_for('admin_assets_upload') }}" enctype="multipart/form-data">
+                        <label class="field-block" for="asset_archive">
+                            <span class="field-label">资源归档</span>
+                            <input id="asset_archive" name="asset_archive" type="file" accept=".tar,.tgz,.tar.gz,.tar.bz2,.tar.xz" required>
+                        </label>
+
+                        <button class="draw-button admin-submit" type="submit">上传并同步静态资源</button>
+                    </form>
+
+                    {% if upload_status %}
+                    <div class="upload-status upload-status--{{ upload_status.kind }}">
+                        <p class="upload-status__message">{{ upload_status.message }}</p>
+                    </div>
+                    {% endif %}
+                </article>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

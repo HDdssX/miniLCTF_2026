@@ -1,0 +1,16 @@
+.git
+__pycache__/
+*.pyc
+dist/
+recycle_bin/
+README.md
+vendor/
+tools/
+scripts/
+my_dist_random.py
+build/*
+!build/out/
+build/out/*
+!build/out/check
+!build/run_check.sh
+!build/recover_flag.py

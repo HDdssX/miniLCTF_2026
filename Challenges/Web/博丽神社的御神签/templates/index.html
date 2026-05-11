@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>博丽神社的御神签</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Serif+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="page-frame">
+        <header class="topbar">
+            <div class="brand">
+                <div class="torii-mark" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" role="presentation">
+                        <path d="M10 18h44M16 26h32M19 18v34M45 18v34M24 26v22M40 26v22M16 52h32" />
+                    </svg>
+                </div>
+                <div class="brand-copy">
+                    <p class="eyebrow">Hakurei Shrine Omikuji / Kappa Cloud Console</p>
+                    <h1>博丽神社的御神签</h1>
+                </div>
+            </div>
+
+            <div class="topbar-meta" aria-label="功能入口">
+                <button class="admin-entry" type="button">进入后台</button>
+            </div>
+        </header>
+
+        <main class="layout">
+            <section class="control-card surface" aria-label="摇签台">
+                <div class="card-head">
+                    <div>
+                        <p class="section-tag">摇签台</p>
+                        <p class="section-title">自动求签终端</p>
+                    </div>
+                    <p class="section-note">三次掷骰定位签号</p>
+                </div>
+
+                <button id="drawBtn" class="draw-button" type="button">再次摇签</button>
+
+                <section class="dice-board" aria-label="本次掷骰结果">
+                    <div class="dice-icons">
+                        <div class="die-shell">
+                            <div id="dieFaceFirst" class="die-face" data-value="0">
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                            </div>
+                        </div>
+                        <div class="die-shell">
+                            <div id="dieFaceSecond" class="die-face" data-value="0">
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                            </div>
+                        </div>
+                        <div class="die-shell">
+                            <div id="dieFaceThird" class="die-face" data-value="0">
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                                <span class="pip"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="dice-label">当前点数</p>
+                    <p id="rollOutput" class="dice-output">-</p>
+                </section>
+
+                <dl class="status-list" aria-label="终端状态">
+                    <div class="status-item">
+                        <dt>System</dt>
+                        <dd id="systemStatus">待命</dd>
+                    </div>
+                    <div class="status-item">
+                        <dt>Fortune</dt>
+                        <dd id="fortuneOutput">-</dd>
+                    </div>
+                    <div class="status-item">
+                        <dt>Session</dt>
+                        <dd id="drawCount">0 次</dd>
+                    </div>
+                </dl>
+
+                <section class="hint-card" aria-label="社务备忘">
+                    <p class="section-tag">社务备忘</p>
+                    <p id="actionHint" class="hint-text">签筒已经备好。按下按钮后，系统会按旧式御神签的三次投骰规则抽取结果。</p>
+                </section>
+
+                <section class="history-card" aria-label="最近记录">
+                    <div class="card-head compact">
+                        <p class="section-tag">最近记录</p>
+                        <p class="section-note">Local session</p>
+                    </div>
+                    <ul id="recentDraws" class="history-list">
+                        <li class="history-empty">暂时还没有新的求签记录。</li>
+                    </ul>
+                </section>
+            </section>
+
+            <section class="result-card surface" aria-label="神签显示区">
+                <div class="result-head">
+                    <div>
+                        <p class="section-tag">神签</p>
+                        <p class="section-title">御神签回执</p>
+                    </div>
+                    <p class="result-note">博丽神社 社务局</p>
+                </div>
+
+                <div class="omikuji-stage">
+                    <div class="omikuji-rail" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+
+                    <div id="fortunePlaceholder" class="fortune-placeholder">
+                        <article class="fortune-slip fortune-slip--state" aria-label="待机中的神签">
+                            <div class="slip-accent" aria-hidden="true"></div>
+                            <div class="slip-state">
+                                <p class="slip-state-code">Oracle Idle</p>
+                                <p class="slip-state-title">签文尚未显现</p>
+                                <p class="slip-state-text">摇出一支签后，右侧会呈现一张简化的御神签。</p>
+                            </div>
+                            <p class="slip-footer slip-footer--center">Hakurei Shrine Oracle</p>
+                        </article>
+                    </div>
+
+                    <div id="fortuneContainer" class="fortune-container is-hidden" aria-live="polite"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        window.__APP_CONFIG__ = {
+            supabaseUrl: window.location.origin,
+            supabaseKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiJ9.ViljdzyyGxp5hJt9XN8WTlLTvo0F92XEqovEeSE1zRo"
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

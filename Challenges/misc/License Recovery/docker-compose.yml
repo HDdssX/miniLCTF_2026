@@ -1,0 +1,7 @@
+services:
+  license-recovery:
+    build: .
+    image: minil2026-license-recovery:latest
+    container_name: ctf-license-recovery
+    stdin_open: true
+    tty: true
